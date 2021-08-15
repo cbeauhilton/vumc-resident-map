@@ -80,7 +80,6 @@ jobs:
           --token $NOW_TOKEN \
           --branch main \
           --project vumc-resident-map \
-          --static static:static \
           --install datasette-json-html \
           --install datasette-cluster-map \
           --public
