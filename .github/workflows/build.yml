@@ -25,7 +25,7 @@ jobs:
       name: Configure pip caching
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
     - uses: actions/cache@v2
@@ -39,6 +39,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install datasette-publish-vercel
+        pip install sqlite-utils
     - name: Install npm dependencies
       run: sudo npm install -g puppeteer-cli --unsafe-perm=true
     - name: Set up dirs

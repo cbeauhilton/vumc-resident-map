@@ -40,7 +40,7 @@ for name, hometown in zip(d["name"], d["hometown"]):
     lat = res.split(",")[2]
     d["longitude"].append(lon)
     d["latitude"].append(lat)
-    print(name)
+    # print(name)
     # print(hometown)
     # print(lon)
     # print(lat)
