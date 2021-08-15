@@ -143,7 +143,7 @@ url = "https://medicine.vumc.org/people/current-internal-medicine-housestaff"
 d = get_one_page(url)
 
 df = pd.DataFrame(d)
-print(df)
+print(df.head())
 
 csv_file = "data/00_folks.csv"
 df.to_csv(csv_file)

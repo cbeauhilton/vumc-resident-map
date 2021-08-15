@@ -41,14 +41,16 @@ for name, hometown in zip(d["name"], d["hometown"]):
     d["longitude"].append(lon)
     d["latitude"].append(lat)
     print(name)
-    print(hometown)
-    print(lon)
-    print(lat)
-    print("\n")
+    # print(hometown)
+    # print(lon)
+    # print(lat)
+    # print("\n")
 
 
 df["longitude"] = d["longitude"]
 df["latitude"] = d["latitude"]
+
+print(df.head())
 
 csv_file = "data/01_folks_and_map.csv"
 df.to_csv(csv_file, index=False)
