@@ -45,20 +45,20 @@ jobs:
     - name: Download previous database unless REBUILD in commit message
       if: |-
         !contains(github.event.head_commit.message, 'REBUILD')
-      run: curl --fail -o main/residents.db https://raw.githubusercontent.com/cbeauhilton/vumc-resident-map-db/main/residents.db
+      run: curl --fail -o data/residents.db https://raw.githubusercontent.com/cbeauhilton/vumc-resident-map-db/main/residents.db
       continue-on-error: true
     - name: Build database
       run: |-
-        cd main
         python scrape.py && python map.py
     - name: Soundness check
       run: |-
-        cd main
+        cd data
         datasette . --get / | grep "residents"
     - name: Save residents.db to cbeauhilton/vumc-resident-map-db
       run: |-
+        ls
         cd vumc-resident-map-db
-        cp ../main/data/residents.db .
+        cp ../main/residents.db .
         git add residents.db
         git commit --amend --no-edit
         git push --force
