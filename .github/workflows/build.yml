@@ -56,7 +56,7 @@ jobs:
     - name: Soundness check
       run: |-
         cd data
-        datasette . --get /
+        datasette . --get / | grep "residents"
     - name: Save residents.db to cbeauhilton/vumc-resident-map-db
       run: |-
         echo "ls:"
@@ -80,8 +80,6 @@ jobs:
       env:
         NOW_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       run: |-
-        ls
-        cd main
         datasette publish vercel data/residents.db \
           --settings default_page_size 300 \
           --token $NOW_TOKEN \
