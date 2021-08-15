@@ -28,18 +28,13 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
+    - uses: actions/cache@v2
+      name: Configure npm caching
       with:
-        node-version: '12.x'
-        cache: 'npm'
-    # - uses: actions/cache@v2
-    #   name: Configure npm caching
-    #   with:
-    #     path: ~/.npm
-    #     key: ${{ runner.os }}-node-
-    #     restore-keys: |
-    #       ${{ runner.os }}-node-
+        path: ~/.npm
+        key: ${{ runner.os }}-node-
+        restore-keys: |
+          ${{ runner.os }}-node-
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
@@ -72,6 +67,10 @@ jobs:
         git add residents.db
         git commit --amend --no-edit
         git push --force
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
     - name: Deploy Datasette using Vercel
       env:
         NOW_TOKEN: ${{ secrets.NOW_TOKEN }}
