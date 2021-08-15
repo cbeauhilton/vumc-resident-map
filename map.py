@@ -1,8 +1,21 @@
 from requests_html import HTMLSession
+from pathlib import Path
 import pandas as pd
 import os
 
 df = pd.read_csv("data/00_folks.csv", index_col=0)
+# print(list(df))
+cols = [
+    "category",
+    "img",
+    "name",
+    "hometown",
+    "college",
+    "medical-school",
+    "career-plans",
+    "bio",
+]
+df = df[cols]
 
 d = {}
 d["name"] = df["name"]
@@ -34,9 +47,13 @@ for name, hometown in zip(d["name"], d["hometown"]):
     print("\n")
 
 
-df['longitude'] = d["longitude"]
-df['latitude'] = d["latitude"]
+df["longitude"] = d["longitude"]
+df["latitude"] = d["latitude"]
 
 csv_file = "data/01_folks_and_map.csv"
-df.to_csv(csv_file)
-os.system(f'sqlite-utils insert data/residents.db residents {csv_file} --csv')
+df.to_csv(csv_file, index=False)
+
+db_file_name = "data/residents.db"
+db_file = Path(db_file_name)
+db_file.unlink(missing_ok=True)
+os.system(f"sqlite-utils insert {db_file_name} residents {csv_file} --csv")
