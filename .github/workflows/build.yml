@@ -49,6 +49,7 @@ jobs:
       continue-on-error: true
     - name: Build database
       run: |-
+        ls
         python scrape.py && python map.py
     - name: Soundness check
       run: |-
@@ -58,7 +59,7 @@ jobs:
       run: |-
         ls
         cd vumc-resident-map-db
-        cp ../main/residents.db .
+        cp ../data/residents.db .
         git add residents.db
         git commit --amend --no-edit
         git push --force
