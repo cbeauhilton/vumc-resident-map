@@ -45,7 +45,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install datasette-publish-vercel
+        datasette install datasette-publish-vercel
         pip install sqlite-utils
     - name: Install npm dependencies
       run: sudo npm install -g puppeteer-cli --unsafe-perm=true
@@ -75,13 +75,14 @@ jobs:
         git push --force
     - name: Deploy Datasette using Vercel
       env:
-        NOW_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        NOW_TOKEN: ${{ secrets.NOW_TOKEN }}
       run: |-
         datasette publish vercel data/residents.db \
           --setting default_page_size 300 \
           --token $NOW_TOKEN \
           --branch main \
           --project vumc-resident-map \
+          --static static:static \
           --install datasette-json-html \
           --install datasette-cluster-map \
           --public
