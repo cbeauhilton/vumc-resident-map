@@ -59,6 +59,9 @@ jobs:
     - name: Save residents.db to cbeauhilton/vumc-resident-map-db
       run: |-
         ls
+        ls data/
+        echo ""
+        ls vumc-resident-map-db/
         cd vumc-resident-map-db
         cp ../data/residents.db .
         git add residents.db
