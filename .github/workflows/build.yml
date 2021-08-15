@@ -59,11 +59,15 @@ jobs:
         datasette . --get /
     - name: Save residents.db to cbeauhilton/vumc-resident-map-db
       run: |-
+        echo "ls:"
         ls
+        echo "data:"
         ls data/
-        echo ""
+        echo "vumc-resident-map-db:"
         ls vumc-resident-map-db/
         cd vumc-resident-map-db
+        git config --global user.email "readme-bot@example.com"
+        git config --global user.name "README-bot"       
         cp ../data/residents.db .
         git add residents.db
         git commit --amend --no-edit
