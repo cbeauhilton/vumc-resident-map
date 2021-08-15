@@ -29,11 +29,13 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: Setup Node.js
-      uses: actions/checkout@v2
-      uses: actions/setup-node@v2
-      with:
-        node-version: '12.x'
-        cache: 'npm'
+      steps:
+      - uses: actions/checkout@v2 
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12.x'
+          cache: 'npm'
+      - run: npm install
     # - uses: actions/cache@v2
     #   name: Configure npm caching
     #   with:
