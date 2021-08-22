@@ -55,7 +55,7 @@ jobs:
       continue-on-error: true
     - name: Build database
       if: |-
-        contains(github.event.head_commit.message, 'REBUILD')
+        contains(github.event.head_commit.message, 'REBUILD') || (github.event_name == 'schedule')
       run: |-
         python scrape.py && python map.py
     - name: Soundness check
