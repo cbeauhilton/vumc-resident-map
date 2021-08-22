@@ -30,6 +30,7 @@ def get_one_page(url: str):
     d["career-plans"] = []
     d["bio"] = []
     d["img"] = []
+    d["popup"] = []
 
     for row in rows:
 
@@ -86,11 +87,10 @@ def get_one_page(url: str):
             d["career-plans"].append("missing")
 
         try:
-            d["bio"].append(
-                row.find("div.field--name-field-brief-description")[0].text.split("\n")[
-                    -1
-                ]
-            )
+            bio = row.find("div.field--name-field-brief-description")[0].text.split(
+                "\n"
+            )[-1]
+            d["bio"].append(bio)
         except:
             d["bio"].append("missing")
 
@@ -131,6 +131,17 @@ def get_one_page(url: str):
             }
             img_json = json.dumps(img_dict)
             d["img"].append(img_json)
+
+            popup_dict = {
+                "image": src,
+                "alt": alt,
+                "title": alt,
+                "description": bio,
+                "link": href,
+            }
+
+            popup_json = json.dumps(popup_dict)
+            d["popup"].append(popup_json)
 
         except:
             d["img"].append("missing")
