@@ -1,8 +1,3 @@
-import os
-from pathlib import Path
-from random import randint
-from time import sleep
-
 import requests
 from requests_html import HTMLSession
 
@@ -35,6 +30,11 @@ def commit_lat_lon(
 
 if __name__ == "__main__":
 
+    from datetime import datetime
+    from random import randint
+    from time import sleep
+
+    start = datetime.now()
     session = HTMLSession()
 
     api = "http://127.0.0.1:9000/residents/"
@@ -67,5 +67,16 @@ if __name__ == "__main__":
         )
 
         patch_response = commit_lat_lon(api, res_id, lat_col, lon_col, lat, lon)
+
+        # github allows up to 6h of execution time, we'll do 4h to be safe
+
+        now = datetime.now()
+        rundiff = now - start
+        runtime = rundiff.total_seconds()
+        print(f"\n Runtime: {runtime} seconds \n")
+
+        allowed_time = 60 * 60 * 4
+        if runtime > allowed_time:
+            exit()
 
         sleep(randint(5, 15))
