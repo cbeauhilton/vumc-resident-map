@@ -72,13 +72,3 @@ def delete_resident(*, session: Session = Depends(get_session), resident_id: int
     session.delete(resident)
     session.commit()
     return {"ok": True}
-
-
-# def main():
-#     create_db_and_tables()
-#
-# if __name__ == "__main__":
-#     main()
-#
-#     response = client.post("/residents/", json={"name": name, "hometown": hometown})
-#     data = response.json()

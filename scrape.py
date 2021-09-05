@@ -108,6 +108,7 @@ def get_img_popup(row, bio):
         "alt": f"{alt}",
         "width": 100,
     }
+
     img_json = json.dumps(img_dict)
 
     popup_dict = {
@@ -132,23 +133,9 @@ def try_or(func, default=None, expected_exc=(Exception,)):
 
 if __name__ == "__main__":
 
-    session = HTMLSession(
-        browser_args=[
-            "--no-sandbox",
-            "--user-agent=Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1",  # noqa
-        ]
-    )
-
-    d = {}
-    d["category"] = []
-    d["name"] = []
-    d["hometown"] = []
-    d["college"] = []
-    d["medicalschool"] = []
-    d["careerplans"] = []
-    d["bio"] = []
-    d["img"] = []
-    d["popup"] = []
+    ua = "--user-agent=Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1"
+    sb = "--no-sandbox"
+    session = HTMLSession(browser_args=[sb, ua])
 
     url = "https://medicine.vumc.org/people/current-internal-medicine-housestaff"
     soup, rows = get_one_page(url)
@@ -156,12 +143,14 @@ if __name__ == "__main__":
     for row in rows:
 
         j = {}
+
         j["name"] = try_or(lambda: get_name(row))
         j["hometown"] = try_or(lambda: get_hometown(row))
         j["category"] = try_or(lambda: get_category(row=row, soup=soup))
         j["college"] = try_or(lambda: get_college(row))
         j["medicalschool"] = try_or(lambda: get_med_school(row))
         j["careerplans"] = try_or(lambda: get_career_plans(row))
+
         bio = try_or(lambda: get_bio(row))
         if bio:
             j["bio"] = bio

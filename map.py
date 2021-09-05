@@ -1,62 +1,58 @@
-from requests_html import HTMLSession
-from pathlib import Path
-import pandas as pd
 import os
+from pathlib import Path
+from random import randint
+from time import sleep
 
-df = pd.read_csv("data/00_folks.csv", index_col=0)
-# print(list(df))
-cols = [
-    "category",
-    "img",
-    "name",
-    "hometown",
-    "college",
-    "medical-school",
-    "career-plans",
-    "bio",
-    "popup",
-]
-df = df[cols]
+import requests
+from requests_html import HTMLSession
 
-d = {}
-d["name"] = df["name"]
-d["hometown"] = df["hometown"]
-d["longitude"] = []
-d["latitude"] = []
 
-session = HTMLSession()
+def google_lat_lon(query: str):
 
-url = "https://www.google.com/maps/search/?api=1"
+    url = "https://www.google.com/maps/search/?api=1"
+    params = {}
+    params["query"] = query
 
-params = {
-    "query": None,
-}
-
-for name, hometown in zip(d["name"], d["hometown"]):
-    params["query"] = hometown
     r = session.get(url, params=params)
+
     reg = "APP_INITIALIZATION_STATE=[[[{}]"
     res = r.html.search(reg)[0]
-    lon = res.split(",")[1]
     lat = res.split(",")[2]
-    d["longitude"].append(lon)
-    d["latitude"].append(lat)
-    # print(name)
-    # print(hometown)
-    # print(lon)
-    # print(lat)
-    # print("\n")
+    lon = res.split(",")[1]
+
+    return lat, lon
 
 
-df["longitude"] = d["longitude"]
-df["latitude"] = d["latitude"]
+def commit_lat_lon(
+    api: str, index: int, lat_col: str, lon_col: str, lat: float, lon: float
+):
 
-print(df.head())
+    url = f"{api}{index+1}"
+    patch_response = requests.patch(url, json={lat_col: lat, lon_col: lon})
 
-csv_file = "data/01_folks_and_map.csv"
-df.to_csv(csv_file, index=False)
+    return patch_response
 
-db_file_name = "data/residents.db"
-db_file = Path(db_file_name)
-db_file.unlink(missing_ok=True)
-os.system(f"sqlite-utils insert {db_file_name} residents {csv_file} --csv")
+
+if __name__ == "__main__":
+
+    session = HTMLSession()
+
+    api = "http://127.0.0.1:8000/residents/"
+    response = requests.get(api).json()
+    print("N:", len(response))
+    response = [r for r in response if r["hometownlatitude"] == None]
+    print("N remaining:", len(response))
+
+    for i, resident in enumerate(response):
+
+        query = resident["hometown"]
+        lat, lon = google_lat_lon(query)
+
+        lat_col = "hometownlatitude"
+        lon_col = "hometownlongitude"
+
+        print(f"{i+1}/{len(response)} |", query, f"| lat: {lat}", f"lon: {lon}")
+
+        patch_response = commit_lat_lon(api, i, lat_col, lon_col, lat, lon)
+
+        sleep(randint(5, 15))
