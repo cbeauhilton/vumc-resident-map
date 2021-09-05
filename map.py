@@ -27,7 +27,7 @@ def commit_lat_lon(
     api: str, index: int, lat_col: str, lon_col: str, lat: float, lon: float
 ):
 
-    url = f"{api}{index+1}"
+    url = f"{api}{index}"
     patch_response = requests.patch(url, json={lat_col: lat, lon_col: lon})
 
     return patch_response
@@ -37,22 +37,35 @@ if __name__ == "__main__":
 
     session = HTMLSession()
 
-    api = "http://127.0.0.1:8000/residents/"
+    api = "http://127.0.0.1:9000/residents/"
     response = requests.get(api).json()
-    print("N:", len(response))
+    lenlen = len(f"{len(response)}")
+    print(f"N:", len(response))
     response = [r for r in response if r["hometownlatitude"] == None]
-    print("N remaining:", len(response))
+    print("N remaining:", len(response), "\n")
+
+    if not response:
+        exit()
 
     for i, resident in enumerate(response):
 
+        res_id = resident["id"]
         query = resident["hometown"]
         lat, lon = google_lat_lon(query)
 
         lat_col = "hometownlatitude"
         lon_col = "hometownlongitude"
 
-        print(f"{i+1}/{len(response)} |", query, f"| lat: {lat}", f"lon: {lon}")
+        print(
+            f"{i+1:0{lenlen}d}/{len(response):0{lenlen}d}",
+            "|",
+            resident["name"],
+            "|",
+            query,
+            f"lat: {lat}",
+            f"lon: {lon}",
+        )
 
-        patch_response = commit_lat_lon(api, i, lat_col, lon_col, lat, lon)
+        patch_response = commit_lat_lon(api, res_id, lat_col, lon_col, lat, lon)
 
         sleep(randint(5, 15))

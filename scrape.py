@@ -111,11 +111,13 @@ def get_img_popup(row, bio):
 
     img_json = json.dumps(img_dict)
 
+    suffix = "?w=800&h=400&fit=crop"
+
     popup_dict = {
-        "image": src,
+        "image": src + suffix,
         "alt": alt,
         "title": alt,
-        "description": bio,
+        "description": bio[:200] + "...",
         "link": href,
     }
 
@@ -156,6 +158,6 @@ if __name__ == "__main__":
             j["bio"] = bio
             j["img"], j["popup"] = try_or(lambda: get_img_popup(row=row, bio=bio))
 
-        u = "http://127.0.0.1:8000/residents/"
+        u = "http://127.0.0.1:9000/residents/"
         db_response = requests.post(u, json=j)
         print(db_response.text)
