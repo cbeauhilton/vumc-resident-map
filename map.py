@@ -14,6 +14,7 @@ cols = [
     "medical-school",
     "career-plans",
     "bio",
+    "popup",
 ]
 df = df[cols]
 
