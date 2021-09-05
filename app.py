@@ -3,8 +3,8 @@ from typing import List
 from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlmodel import Session, select
 
-from .database import create_db_and_tables, get_session
-from .models import Resident, ResidentCreate, ResidentRead, ResidentUpdate
+from database import create_db_and_tables, get_session
+from models import Resident, ResidentCreate, ResidentRead, ResidentUpdate
 
 app = FastAPI()
 
@@ -34,6 +34,14 @@ def read_residents(
 ):
     residents = session.exec(select(Resident).offset(offset).limit(limit)).all()
     return residents
+
+
+@app.get("/residents/{resident_id}", response_model=ResidentRead)
+def read_resident(*, session: Session = Depends(get_session), resident_id: int):
+    resident = session.get(Resident, resident_id)
+    if not resident:
+        raise HTTPException(status_code=404, detail="Resident not found")
+    return resident
 
 
 @app.patch("/residents/{resident_id}", response_model=ResidentRead)
@@ -66,9 +74,11 @@ def delete_resident(*, session: Session = Depends(get_session), resident_id: int
     return {"ok": True}
 
 
-def main():
-    create_db_and_tables()
-
-
-if __name__ == "__main__":
-    main()
+# def main():
+#     create_db_and_tables()
+#
+# if __name__ == "__main__":
+#     main()
+#
+#     response = client.post("/residents/", json={"name": name, "hometown": hometown})
+#     data = response.json()
