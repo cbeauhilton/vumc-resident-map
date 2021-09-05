@@ -1,13 +1,7 @@
+This repo creates a map of the residents in the internal medicine program at VUMC.
 
-How to get the pics in the map (adapted from Simon's website):
+It is also an exploration of several technologies I'm using in a different project.
 
-```sql
+If you'd like to fork it, make sure you read the workflow file to see the secrets you'll need to set up.
 
-select json_object(
-  'image', img || '?w=800&h=400&fit=crop',
-  'title', name,
-  'description', substr(bio, 0, 200),
-  ) as popup,
-  latitude, longitude from folks
-
-```
+Also take a glance at `rc.sh`, which orchestrates the other scripts.
