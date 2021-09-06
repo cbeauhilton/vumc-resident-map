@@ -6,9 +6,7 @@ from sqlmodel import VARCHAR, Column, Field, SQLModel
 
 
 class ResidentBase(SQLModel):
-    # name: str = Field(default=None, primary_key=True)
     name: str = Field(sa_column=Column("name", VARCHAR, unique=True))
-    # name: str
     hometown: Optional[str] = None
     category: Optional[str] = None
     college: Optional[str] = None
