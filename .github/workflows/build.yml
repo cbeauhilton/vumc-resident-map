@@ -69,7 +69,7 @@ jobs:
         cd vumc-resident-map-db
         git config --global user.email "readme-bot@example.com"
         git config --global user.name "README-bot"       
-        cp ../data/residents.db .
+        cp ../data/database.db .
         cp ../data/hometown.db .
         git add *.db
         git commit --amend --no-edit
