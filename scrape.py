@@ -1,6 +1,5 @@
 import json
 import os
-import sqlite3 as sql
 
 # import pandas as pd
 import requests
@@ -135,9 +134,17 @@ def try_or(func, default=None, expected_exc=(Exception,)):
 
 if __name__ == "__main__":
 
+    import sys
+
+    if "--deta" in sys.argv[1:]:
+        deta_deploy = 1
+        from deta import Deta
+
     ua = "--user-agent=Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1"
     sb = "--no-sandbox"
     session = HTMLSession(browser_args=[sb, ua])
+    headers = {}
+    headers["Content-Type"] = "application/json"
 
     url = "https://medicine.vumc.org/people/current-internal-medicine-housestaff"
     soup, rows = get_one_page(url)
@@ -158,6 +165,23 @@ if __name__ == "__main__":
             j["bio"] = bio
             j["img"], j["popup"] = try_or(lambda: get_img_popup(row=row, bio=bio))
 
-        u = "http://127.0.0.1:9000/residents/"
-        db_response = requests.post(u, json=j)
-        print(db_response.text)
+        if deta_deploy:
+            from deta import Deta
+
+            project_id = os.environ.get("DETA_ID_RESIDENTS")
+            base_name = os.environ.get("DETA_BASE_NAME_RESIDENTS")
+            API_key = os.environ.get("DETA_TOKEN_RESIDENTS")
+
+            deta = Deta(API_key)
+            db = deta.Base("residents")
+            db.insert(j)
+
+        #             headers["X-API-Key"] = f"{API_key}"
+        #
+        #             u = f"https://database.deta.sh/v1/{project_id}/{base_name}"
+        #             print(headers, u)
+
+        else:
+            u = "http://127.0.0.1:8000/residents/"
+            db_response = requests.post(u, json=j, headers=headers)
+            print(db_response.text)
