@@ -38,12 +38,14 @@ jobs:
       run: |-
         python map.py
         sqlite-utils insert vumc2022.db residents bio_map.csv --csv
+        sqlite-utils convert vumc2022.db residents career_plans \
+        'r.jsonsplit(value)'
         sqlite-utils transform vumc2022.db residents \
         --rename name Name \
         --rename hometown Hometown \
         --rename undergrad "Undergraduate School" \
         --rename med_school "Medical School" \
-        --rename career_plans "Career Plans"
+        --rename career_plans "Career Plans"        
     - name: Soundness check
       run: |-
         datasette vumc2022.db --get / | grep "residents"
