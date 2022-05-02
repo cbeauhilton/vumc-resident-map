@@ -35,7 +35,7 @@ if __name__ == "__main__":
     residents["latitude"] = lats
     residents["longitude"] = lons
 
-    residents.to_csv("bio_map.csv")
+    residents.to_csv("bio_map.csv", index=False)
     print(list(residents))
     print(residents)
     print(residents.head(50))
