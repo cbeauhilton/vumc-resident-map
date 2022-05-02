@@ -45,32 +45,19 @@ jobs:
         datasette install datasette-publish-vercel
     - name: Install npm dependencies
       run: sudo npm install -g puppeteer-cli --unsafe-perm=true
-    - name: Set up dirs
-      run: |
-        mkdir -p data
-        mkdir -p logs
-    - name: Download previous database unless REBUILD in commit message
-      if: |-
-        !contains(github.event.head_commit.message, 'REBUILD')
-      run: curl --fail -o data/hometown.db https://raw.githubusercontent.com/cbeauhilton/vumc-resident-map-db/main/hometown.db
-      continue-on-error: true
     - name: Build database
-      if: |-
-        contains(github.event.head_commit.message, 'REBUILD') || (github.event_name == 'schedule')
       run: |-
-        chmod +x rc.sh
-        ./rc.sh
+        python map.py
+        sqlite-utils insert vumc2022.db residents bios_map.csv --csv
     - name: Soundness check
       run: |-
-        cd data
-        datasette hometown.db --get / | grep "hometown"
+        datasette vumc2022.db --get / | grep "hometown"
     - name: Save db to cbeauhilton/vumc-resident-map-db
       run: |-
         cd vumc-resident-map-db
         git config --global user.email "readme-bot@example.com"
         git config --global user.name "README-bot"       
-        cp ../data/database.db .
-        cp ../data/hometown.db .
+        cp ../vumc2022.db .
         git add *.db
         git commit --amend --no-edit
         git push --force
@@ -82,7 +69,7 @@ jobs:
       env:
         NOW_TOKEN: ${{ secrets.NOW_TOKEN }}
       run: |-
-        datasette publish vercel data/hometown.db \
+        datasette publish vercel vumc2022.db \
           --setting default_page_size 300 \
           --token $NOW_TOKEN \
           --project vumc-resident-map \
