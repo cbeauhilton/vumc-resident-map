@@ -22,6 +22,7 @@ def google_lat_lon(query: str, session):
 if __name__ == "__main__":
 
     residents = pd.read_csv("bio.csv")
+    residents.drop(columns=['bio'], errors="ignore", inplace=True)
     lats = []
     lons = []
 
