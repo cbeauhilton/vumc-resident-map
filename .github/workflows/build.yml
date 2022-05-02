@@ -38,6 +38,9 @@ jobs:
       run: |-
         python map.py
         sqlite-utils insert vumc2022.db residents bio_map.csv --csv
+    - name: Soundness check
+      run: |-
+        datasette vumc2022.db --get / | grep "residents"
     - name: save db to cbeauhilton/vumc-resident-map-db
       run: |-
         cd vumc-resident-map-db
