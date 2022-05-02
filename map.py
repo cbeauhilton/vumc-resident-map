@@ -35,3 +35,4 @@ if __name__ == "__main__":
     residents["longitude"] = lons
 
     residents.to_csv("bio_map.csv")
+    print(residents.head(50))
