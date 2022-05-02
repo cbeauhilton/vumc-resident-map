@@ -49,7 +49,9 @@ jobs:
         git config --global user.email "readme-bot@example.com"
         git config --global user.name "README-bot"       
         cp ../vumc2022.db .
+        cp ../bio_map.csv .
         git add *.db
+        git add *.csv
         git commit --amend --no-edit
         git push --force
     - name: Deploy Datasette using Vercel
