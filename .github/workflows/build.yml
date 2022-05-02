@@ -38,21 +38,18 @@ jobs:
       run: |-
         python map.py
         sqlite-utils insert vumc2022.db residents bio_map.csv --csv
-    - name: Soundness check
-      run: |-
-        datasette vumc2022.db --get / | grep "hometown"
-    - name: Save db to cbeauhilton/vumc-resident-map-db
+    - name: save db to cbeauhilton/vumc-resident-map-db
       run: |-
         cd vumc-resident-map-db
-        git config --global user.email "readme-bot@example.com"
-        git config --global user.name "README-bot"       
+        git config --global user.email "db-bot@example.com"
+        git config --global user.name "db-bot"       
         cp ../vumc2022.db .
         cp ../bio_map.csv .
         git add *.db
         git add *.csv
         git commit --amend --no-edit
         git push --force
-    - name: Deploy Datasette using Vercel
+    - name: deploy
       env:
         NOW_TOKEN: ${{ secrets.NOW_TOKEN }}
       run: |-
