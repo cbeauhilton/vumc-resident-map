@@ -51,7 +51,7 @@ if __name__ == "__main__":
     residents = residents.drop_duplicates()
     residents.drop(columns=['place'], errors="ignore", inplace=True)
     # residents["image"] = residents["image"].apply(lambda x: f"https://github.com/cbeauhilton/vumc-resident-map/raw/main/{x}?w=400")
-    residents["image"] = residents["image"].apply(lambda x: f"https://vanderbilt-university-medical-center.imgix.net/{x.removeprefix('img/')}?w=200")
+    residents["image"] = residents["image"].apply(lambda x: f"https://vanderbilt-university-medical-center.imgix.net/{x.removeprefix('img/')}?w=150")
     residents["popup"] = residents.apply(lambda x: f'{{"image": "{x["image"]}", "alt": "{x["name"]}","title": "{x["name"]}","description": "Hometown: {x["hometown"]}; Undergraduate School: {x["undergrad"]}; Medical School: {x["med_school"]}; Career Plans: {x["career_plans"]}"}}',
                                          axis=1)
     print(residents["popup"])
