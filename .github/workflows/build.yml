@@ -55,11 +55,18 @@ jobs:
         git config --global user.email "db-bot@example.com"
         git config --global user.name "db-bot"       
         cp ../vumc2022.db .
-        cp ../bio_map.csv .
+        cp ../*.csv .
         git add *.db
         git add *.csv
         git commit --amend --no-edit
         git push --force
+    - name: Upload to releases
+      uses: softprops/action-gh-release@v1
+      with:
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN_FOR_PUSH }}
+        tag_name: "database"
+        files: |
+          vumc2022.db
     - name: deploy
       env:
         NOW_TOKEN: ${{ secrets.NOW_TOKEN }}

@@ -1,4 +1,3 @@
-import requests
 from requests_html import HTMLSession
 import pandas as pd
 
@@ -23,19 +22,39 @@ if __name__ == "__main__":
 
     residents = pd.read_csv("bio.csv")
     residents.drop(columns=['bio'], errors="ignore", inplace=True)
+    places_df = pd.read_csv("places.csv")
+    residents = residents.merge(places_df, left_on="hometown", right_on="place", how="outer")
+    print(residents)
     lats = []
     lons = []
+    places = []
 
-    for name, hometown in zip(residents["name"], residents["hometown"]):
-        lat, lon = google_lat_lon(hometown, HTMLSession())
-        lats.append(lat)
-        lons.append(lon)
-        print(f"Name: {name} \nHometown: {hometown} \nLatitude: {lat} \nLongitude: {lon} \n\n---")
+    df = residents[residents["longitude"].isnull()]
 
-    residents["latitude"] = lats
-    residents["longitude"] = lons
+    if len(df.index) > 0:
+        for name, place in zip(df["name"], df["hometown"]):
+            lat, lon = google_lat_lon(place, HTMLSession())
+            lats.append(lat)
+            lons.append(lon)
+            places.append(place)
+            print(f"Name: {name} \nHometown: {place} \nLatitude: {lat} \nLongitude: {lon} \n\n---")
 
+        df["latitude"] = lats
+        df["longitude"] = lons
+
+        residents = pd.concat([df, residents])
+
+        new_places = pd.DataFrame(list(zip(places, lats, lons)), columns=['place', 'latitude', 'longitude'])
+        places_df = pd.concat([places_df, new_places]).drop_duplicates()
+        places_df.to_csv("places.csv", index=False)
+
+    residents = residents.drop_duplicates()
+    residents.drop(columns=['place'], errors="ignore", inplace=True)
+    residents["image"] = residents["image"].apply(lambda x: f"https://github.com/cbeauhilton/vumc-resident-map/raw/main/{x}")
+    residents["popup"] = residents.apply(lambda x: f'{{"image": "{x["image"]}", "alt": "{x["name"]}","title": "{x["name"]}","description": "Hometown: {x["hometown"]}, Undergraduate School: {x["undergrad"]}, Medical School: {x["med_school"]}, Career Plans: {x["career_plans"]}"}}',
+                                         axis=1)
+    print(residents["popup"])
     residents.to_csv("bio_map.csv", index=False)
-    print(list(residents))
-    print(residents)
-    print(residents.head(50))
+    # print(list(residents))
+    # print(residents)
+    # print(residents.head(50))
